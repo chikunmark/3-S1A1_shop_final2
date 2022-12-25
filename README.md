@@ -1,4 +1,4 @@
-# S2A1 打造餐廳清單
+# 打造餐廳清單
 本專案以練習路由、handlebars 為主要目的，並提供推薦餐廳的清單。  
 點擊餐廳內容框，會跳出店家的進一步介紹，並有附上搜尋功能 (如下連結圖示)。  
 ![簡圖](readme_pics/example_2.jpg)  
@@ -9,13 +9,13 @@
 2. 執行
 
 ```
-git clone https://github.com/chikunmark/S2A7.git
+git clone https://github.com/chikunmark/S2A8_Refactoring.git
 ```
 3. 安裝必要套件、並初始化  
 
 3.1 進入專案資料夾
 ```
-cd S2A1
+cd S2A8_Refactoring-main
 ```
 3.2 安裝必要套件
 ```
