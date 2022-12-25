@@ -1,8 +1,16 @@
 const express = require('express')
 const app = express() // 為什麼不把這兩行直接合成 const app = require('express')，試了，就是不行，官網也沒說原因，隨便 (攤手)
+// 試試
 const port = 8080
 const exphbs = require('express-handlebars') // require handlebars
-const shop_json = require('./models/seeds/restaurant.json') // 引入 json 檔
+
+const methodOverride = require('method-override')
+// 設定每一筆請求都會透過 methodOverride 進行前置處理 (這啥意思？)
+// P.S. 好像得擺在 bodyParser 之後，先擺這試試，看會怎樣
+app.use(methodOverride('_method'))
+// 上面 _method 是參數，也能改成其他字，代表一遇到 '' 內的字，就會將 HTTP method 換成 _method 的值 (例： _method=delete，form 裡面的 HTTP method 就會換成 delete)
+
+const routes = require('./routes/index') // 引用路由資料夾 (教案說引入路由器)，可不寫 /index，因為預設會去找它
 
 const Shop = require('./models/shop_db_schema') // 引入資料架構
 const mongoose = require('mongoose')
@@ -34,16 +42,7 @@ app.use(express.urlencoded({ extended: true })) // 藉 express 內建的 body pa
 
 // routes setting
 // 首頁的路由
-app.get('/', (req, res) => {
-  const cssName = 'index'
-  // 拿到 DB 內的店家資料並渲染
-  // console.log(Shop.find({ name: '梅子鰻蒲燒專賣店' }))
-  // Shop.find({ name: '梅子鰻蒲燒專賣店' })
-  Shop.find()
-    .lean()
-    .then(shops => res.render('index', { name: cssName, shops: shops }))
-    .catch(error => console.error(error))
-})
+app.use(routes) // 以 routes 為參數，使用 app (express) 這個套件 (導入 index.js 的路由)
 
 // 搜尋功能、路由
 app.get('/search', (req, res) => {
@@ -80,7 +79,7 @@ app.get('/restaurants/:_id', (req, res) => {
     .catch(err => console.error(err)) // 為何不省略函式，直接寫 console.log(err) ??
 })
 
-// 新增店家頁面
+// 顯示新增店家頁面
 app.get('/newshop', (req, res) => {
   const cssName = 'show'
   const title = '新增一間餐廳'
@@ -96,13 +95,13 @@ app.post('/create-new-record', (req, res) => {
     .catch(err => console.error(err))
 })
 
-// 渲染 edit 頁面資料
+// 顯示 edit 頁面資料
 app.get('/restaurants/edit/:_id', (req, res) => {
   // console.log(req.params.id)
   const cssName = 'show'
   const title = '編輯餐廳細節'
   const _id = req.params._id
-  const action = `/update/${_id}`
+  const action = `/update/${_id}?_method=PUT`
   return (
     Shop.findById(_id)
       .lean()
@@ -115,7 +114,7 @@ app.get('/restaurants/edit/:_id', (req, res) => {
 })
 
 // 送出更新餐廳資料
-app.post('/update/:_id', (req, res) => {
+app.put('/update/:_id', (req, res) => {
   const updateArray = req.body
   const _id = req.params._id
 
@@ -143,7 +142,7 @@ app.post('/update/:_id', (req, res) => {
 })
 
 // 刪除餐廳功能 (先用 method = post)
-app.post('/restaurants/delete/:_id', (req, res) => {
+app.delete('/restaurants/:_id', (req, res) => {
   const _id = req.params._id
   return Shop.findById(_id) // 從 DB 的 "_id" 去尋找
     .then(shop => shop.remove())

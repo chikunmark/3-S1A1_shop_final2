@@ -41,9 +41,16 @@
       <p class='mb-5'>{{shop.description}}</p>
 
       <img class='rounded mx-auto d-block mb-4 w-100' src='{{shop.image}}' alt='{{shop.name}}' style='max-width: 600px;' />
-      <a href='/restaurants/edit/{{shop._id}}'>
-        <button class='btn btn-outline-danger mx-auto mb-4' style='display: block;'>編輯</button>
-      </a>
+      <div class='text-center'>
+
+        <a href='/restaurants/edit/{{shop._id}}'>
+          <button class='btn btn-outline-danger mb-4'>編輯</button>
+        </a>
+
+        <form class='d-inline' action='/restaurants/{{shop._id}}?_method=delete' method='POST'>
+          <button type='submit' class='btn btn-outline-danger mb-4'>刪除此店家</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
