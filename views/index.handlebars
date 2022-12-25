@@ -1,6 +1,6 @@
 <!-- search bar -->
-<div class='container search-bar'>
-  <div class='search-bar-outer'>
+<div class='search-bar d-flex justify-content-between'>
+  <div class='d-flex search-bar-outer'>
     <div class='search-bar-inner'>
       <form action='/search'>
         <h4 class='mb-2'>尋找餐廳：</h4>
@@ -13,6 +13,24 @@
       </form>
     </div>
   </div>
+  <!-- sort button -->
+  <div class='d-flex dropdown search-bar-outer'>
+    <div class='search-bar-inner'>
+      <button class='btn dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+        排序方式
+      </button>
+      <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='/abc'>測試排列 順序</a></li>
+        <li><a class='dropdown-item' href='/cba'>測試排列 倒序</a></li>
+        <li><a class='dropdown-item' href='/shops/sort/_id'>原始排列</a></li>
+        <li><a class='dropdown-item' href='/shops/sort/name_from_high'>店名首字筆畫 (多->少)</a></li>
+        <li><a class='dropdown-item' href='/shops/sort/name_from_low'>店名首字筆畫 (少->多)</a></li>
+        <li><a class='dropdown-item' href='#'>餐點類別</a></li>
+        <li><a class='dropdown-item' href='#'>評分 (高->低)</a></li>
+      </ul>
+    </div>
+  </div>
+
 </div>
 
 <!-- restaurant list -->

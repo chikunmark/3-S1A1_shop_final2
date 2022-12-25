@@ -1,23 +1,13 @@
-const mongoose = require('mongoose')
+const db = require('../../config/mongoose') // 教案說，這是接收該路徑 export 出來，取名為 db 的資料
 const shop_json = require('./restaurant.json').results
 const Shop = require('../shop_db_schema')
 
-// 敏感資料，之後移動
-const MONGODB_URI = 'mongodb+srv://alpha:camp@cluster0.ke4xjxv.mongodb.net/S2A7-shop-list?retryWrites=true&w=majority'
-// 加入這段 code, 僅在非正式環境時, 使用 dotenv
-if (process.env.NODE_ENV !== 'production') {
-  // console.log(process.env.NODE_ENV) // 怪了，為何會是 undefined??
-  require('dotenv').config()
-}
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 設定連線到 mongoDB
-const db = mongoose.connection
+// const aaa = require('../../config/mongoose.aaa')
+// (上1) 引入多個變數，還沒試成，等下繼續試
+// console.log(aaa)
 
-db.on('error', () => {
-  console.log('mongodb error!!')
-})
 db.once('open', () => {
   // 因只會發生一次，所以用 once
-  console.log('mongoDB connected!!')
   for (let i = 0; i < shop_json.length; i++) {
     Shop.create({
       id: shop_json[i].id,
