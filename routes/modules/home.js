@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const Shop = require('./models/shop_db_schema') // 引入資料架構
+const Shop = require('../../models/shop_db_schema') // 引入資料架構
 
 // 首頁的路由
 // app.get('/', (req, res) => { // 舊的，是在 app.js 內，用 app 作為變數
