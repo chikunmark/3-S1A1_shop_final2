@@ -21,6 +21,10 @@ cd S2A8_Refactoring-main
 ```
 npm install
 ```
+3.3 本專案有使用環境變數，並使用 mongoose 連接 MongoDB，  
+   請參考下圖，自行在當下目錄建立檔案，連結到您的 MongoDB 的 URI  
+   (變數名請用 MONGODB_URI)  
+   ![.env demo](readme_pics/example2.jpg)
 3.3 執行 seeder.js (輸入資料)
 ```
 npm run seed

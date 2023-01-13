@@ -6,25 +6,41 @@ const Shop = require('../../models/shop_db_schema')
 // 那怪了，明明也需要渲染頁面，為啥沒引入 express-handlebars??
 // 還是說，只要是沒直接 key 在這的檔案的變數、函數，不輸入也沒關係，只要引用它的檔案有輸入(設定好)就好？
 
-// 搜尋功能、路由
+// 搜尋、排序功能、路由
 router.get('/search', (req, res) => {
   // console.log('小寫搜尋', req.query.keyword.toLocaleLowerCase())
   const cssName = 'index'
   const wordForSearch = req.query.keyword.trim().toLocaleLowerCase()
+  const sort = req.query.sort || '_id-asc'
+  // console.log(sort)
+  const sortName =
+    sort === '_id-asc' ? '原始排列' :
+      sort === '_id-desc' ? '原始排列 (反向)' :
+        sort === 'name-asc' ? '店名首字排序 (小->大)' :
+          sort === 'name-desc' ? '店名首字排序 (大->小)' :
+            sort === 'location-asc' ? '地址首字排序 (小->大)' :
+              sort === 'location-desc' ? '地址首字排序 (大->小)' :
+                '--:'
+  const sortArray = sort.split('-')
+  // const sequence = {sort[0]: sort[1]} // 這寫法不行，要用下2行才行
+  const sequence = {}
+  sequence[sortArray[0]] = sortArray[1]
+
 
   // 若沒關鍵字，返回首頁
-  if (!wordForSearch) {
+  if (!wordForSearch && !sort) {
     return res.redirect('/')
   }
 
   // 答案是從 DB 取下來再處理，我原本是想直接在 DB 找到相符的再取下來
-  Shop.find()
+  return Shop.find()
     .lean()
+    .sort(sequence) // 只要 () 內的是正確的 object (例：{_id: desc})，就算輸入變數也沒關係
     .then(shopArray => {
       // 上面的 shopArray，是 Shop 經過.find().lean().then() 之後自動生成的結果，是個陣列，我不知為何以陣列形式呈現，反正是這樣。
       // 不論改成 .find().lean() 或 .find().lean().then() 都沒法產生該陣列，必須要寫成現在這樣，才能把數據導出
       const filtershopData = shopArray.filter(data => data.name.toLowerCase().includes(wordForSearch) || data.category.includes(wordForSearch))
-      res.render('index', { shops: filtershopData, keyword: req.query.keyword, name: cssName })
+      res.render('index', { shops: filtershopData, keyword: req.query.keyword, cssName, sortName, sort })
     })
     .catch(err => console.log(err))
 })
@@ -37,7 +53,7 @@ router.get('/restaurants/:_id', (req, res) => {
 
   Shop.findById(_id)
     .lean()
-    .then(shopArray => res.render('show', { name: cssName, shop: shopArray }))
+    .then(shopArray => res.render('show', { cssName, shop: shopArray }))
     .catch(err => console.error(err)) // 為何不省略函式，直接寫 console.log(err) ??
 })
 
@@ -46,7 +62,7 @@ router.get('/newshop', (req, res) => {
   const cssName = 'show'
   const title = '新增一間餐廳'
   const action = '/create-new-record'
-  res.render('edit', { name: cssName, title, action })
+  res.render('edit', { cssName, title, action })
 })
 
 // 傳送新增資料
@@ -70,7 +86,7 @@ router.get('/restaurants/edit/:_id', (req, res) => {
       // .then(shop => console.log(shop))
       .then(shop => {
         // console.log(shop) //檢查用
-        res.render('edit', { shop, title, action, name: cssName })
+        res.render('edit', { shop, title, action, cssName })
       })
   )
 })

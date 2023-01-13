@@ -1,10 +1,9 @@
-const db = require('../../config/mongoose') // 教案說，這是接收該路徑 export 出來，取名為 db 的資料
+const db = require('../../config/mongoose')
+// (上1) 教案說，這是接收該路徑 export 出來，取名為 db 的資料
+// 查過後，應這樣說，把該路徑 export 出來的資料，定義為 const db
+// const 取甚麼名字都沒關係，都會得到 require 路徑 export 出來的資料 (變數、函數、或是其他)
 const shop_json = require('./restaurant.json').results
 const Shop = require('../shop_db_schema')
-
-// const aaa = require('../../config/mongoose.aaa')
-// (上1) 引入多個變數，還沒試成，等下繼續試
-// console.log(aaa)
 
 db.once('open', () => {
   // 因只會發生一次，所以用 once
