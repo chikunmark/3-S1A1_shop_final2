@@ -5,6 +5,7 @@ const Shop = require('../../models/shop_db_schema')
 // 只是因為下面的 'Shop' 需要用到，所以引入
 // 那怪了，明明也需要渲染頁面，為啥沒引入 express-handlebars??
 // 還是說，只要是沒直接 key 在這的檔案的變數、函數，不輸入也沒關係，只要引用它的檔案有輸入(設定好)就好？
+// 照助教說法，不須再引入 handlebars，純粹是語法，沒有 "原理上" 的原因
 
 // 搜尋、排序功能、路由
 router.get('/search', (req, res) => {
@@ -13,19 +14,21 @@ router.get('/search', (req, res) => {
   const wordForSearch = req.query.keyword.trim().toLocaleLowerCase()
   const sort = req.query.sort || '_id-asc'
   // console.log(sort)
-  const sortName =
-    sort === '_id-asc' ? '原始排列' :
-      sort === '_id-desc' ? '原始排列 (反向)' :
-        sort === 'name-asc' ? '店名首字排序 (小->大)' :
-          sort === 'name-desc' ? '店名首字排序 (大->小)' :
-            sort === 'location-asc' ? '地址首字排序 (小->大)' :
-              sort === 'location-desc' ? '地址首字排序 (大->小)' :
-                '--:'
+  const sortNameInDropDown = sortFromQuery => {
+    const sortName = {
+      '_id-asc': '原始排列',
+      '_id-desc': '原始排列 (反向)',
+      'name-asc': '店名首字排序 (小->大)',
+      'name-desc': '店名首字排序 (大->小)',
+      'location-asc': '地址首字排序 (小->大)',
+      'location-desc': '地址首字排序 (大->小)',
+    }
+    return sortName[sort] || '--'
+  }
   const sortArray = sort.split('-')
   // const sequence = {sort[0]: sort[1]} // 這寫法不行，要用下2行才行
   const sequence = {}
   sequence[sortArray[0]] = sortArray[1]
-
 
   // 若沒關鍵字，返回首頁
   if (!wordForSearch && !sort) {
@@ -40,7 +43,7 @@ router.get('/search', (req, res) => {
       // 上面的 shopArray，是 Shop 經過.find().lean().then() 之後自動生成的結果，是個陣列，我不知為何以陣列形式呈現，反正是這樣。
       // 不論改成 .find().lean() 或 .find().lean().then() 都沒法產生該陣列，必須要寫成現在這樣，才能把數據導出
       const filtershopData = shopArray.filter(data => data.name.toLowerCase().includes(wordForSearch) || data.category.includes(wordForSearch))
-      res.render('index', { shops: filtershopData, keyword: req.query.keyword, cssName, sortName, sort })
+      res.render('index', { shops: filtershopData, keyword: req.query.keyword, cssName, sort, sortNameInDropDown })
     })
     .catch(err => console.log(err))
 })
@@ -127,43 +130,6 @@ router.delete('/restaurants/:_id', (req, res) => {
     .then(() => res.redirect('/'))
     .catch(error => console.error(error))
 })
-
-// 排序
-// router.get('/shops/sort/:type', (req, res) => {
-//   // <a> method 改成 put 沒成功，等下繼續試
-//   const type = req.params.type
-//   console.log('type 裡的字是', type)
-//   let aaa = ''
-
-//   if (type === `name_from_high`) {
-//     sequence = Shop.find()
-//       .lean()
-//       .sort({ name: 'desc' })
-//       .then(aaa => console.log(aaa))
-//   } else if (type === `name_from_low`) {
-//     sequence = Shop.find()
-//       .lean()
-//       .sort({ name: 'asc' })
-//       .then(aaa => console.log(aaa))
-//   }
-// console.log(sequence)
-
-// Shop.find()
-//   .lean()
-//   .then(shop => {
-//     if (type === `name_from_high`) {
-//       console.log(shop)
-//       const sort = shop.sort({ name: 'desc' })
-//       console.log(sort)
-//     } else if (type === `name_from_low`) {
-//       console.log(shop)
-//       const sort = shop.sort({ name: 'asc' })
-//       console.log(sort)
-//     }
-//   })
-//   .then(res.redirect('/'))
-//   .catch(err => console.error(err))
-// })
 
 // 把結果匯出路由器，雖不知為何不能寫成 module.exports = express.Router()
 module.exports = router

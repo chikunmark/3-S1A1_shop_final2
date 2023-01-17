@@ -14,11 +14,11 @@ router.get('/', (req, res) => {
   // 新的 const router = express.Router()
   // 舊的 const app = express()
   const cssName = 'index'
-  const sortName = '--'
+  const sortNameInDropDown = '--'
   // (下) 拿到 DB 內的店家資料並渲染
   Shop.find()
     .lean()
-    .then(shops => res.render('index', { cssName, shops: shops, sortName }))
+    .then(shops => res.render('index', { cssName, shops: shops, sortNameInDropDown }))
     .catch(error => console.error(error))
 })
 
