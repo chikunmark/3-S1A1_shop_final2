@@ -14,7 +14,9 @@ router.get('/search', (req, res) => {
   const wordForSearch = req.query.keyword.trim().toLocaleLowerCase()
   const sort = req.query.sort || '_id-asc'
   // console.log(sort)
-  const sortNameInDropDown = sortFromQuery => {
+
+  const sortNameInDropDown = () => {
+    // (上1)若輸入 sort 作為參數名，不知為何會相衝到，造成 sortName[sort] 值變成 undefined
     const sortName = {
       '_id-asc': '原始排列',
       '_id-desc': '原始排列 (反向)',
@@ -25,6 +27,7 @@ router.get('/search', (req, res) => {
     }
     return sortName[sort] || '--'
   }
+
   const sortArray = sort.split('-')
   // const sequence = {sort[0]: sort[1]} // 這寫法不行，要用下2行才行
   const sequence = {}
