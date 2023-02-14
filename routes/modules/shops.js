@@ -15,7 +15,7 @@ router.get('/search', (req, res) => {
   const sort = req.query.sort || '_id-asc'
   // console.log(sort)
 
-  const sortNameInDropDown = () => {
+  const sortNameInDropDown = sort => {
     // (上1)若輸入 sort 作為參數名，不知為何會相衝到，造成 sortName[sort] 值變成 undefined
     const sortName = {
       '_id-asc': '原始排列',
@@ -46,7 +46,8 @@ router.get('/search', (req, res) => {
       // 上面的 shopArray，是 Shop 經過.find().lean().then() 之後自動生成的結果，是個陣列，我不知為何以陣列形式呈現，反正是這樣。
       // 不論改成 .find().lean() 或 .find().lean().then() 都沒法產生該陣列，必須要寫成現在這樣，才能把數據導出
       const filtershopData = shopArray.filter(data => data.name.toLowerCase().includes(wordForSearch) || data.category.includes(wordForSearch))
-      res.render('index', { shops: filtershopData, keyword: req.query.keyword, cssName, sort, sortNameInDropDown })
+      res.render('index', { shops: filtershopData, keyword: req.query.keyword, cssName, sort, sortNameInDropDown: sortNameInDropDown(sort) })
+      // 上面的 sortNameInDropDown 要考慮要留 (sort) -> 去掉的話，會長得更像變數 (雖是函數)
     })
     .catch(err => console.log(err))
 })
