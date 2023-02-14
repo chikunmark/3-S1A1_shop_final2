@@ -9,14 +9,12 @@ const Shop = require('../../models/shop_db_schema')
 
 // 搜尋、排序功能、路由
 router.get('/search', (req, res) => {
-  // console.log('小寫搜尋', req.query.keyword.toLocaleLowerCase())
+  const userId = req.user._id
   const cssName = 'index'
   const wordForSearch = req.query.keyword.trim().toLocaleLowerCase()
   const sort = req.query.sort || '_id-asc'
-  // console.log(sort)
 
   const sortNameInDropDown = sort => {
-    // (上1)若輸入 sort 作為參數名，不知為何會相衝到，造成 sortName[sort] 值變成 undefined
     const sortName = {
       '_id-asc': '原始排列',
       '_id-desc': '原始排列 (反向)',
@@ -39,7 +37,7 @@ router.get('/search', (req, res) => {
   }
 
   // 答案是從 DB 取下來再處理，我原本是想直接在 DB 找到相符的再取下來
-  return Shop.find()
+  return Shop.find({ userId })
     .lean()
     .sort(sequence) // 只要 () 內的是正確的 object (例：{_id: desc})，就算輸入變數也沒關係
     .then(shopArray => {
@@ -54,9 +52,8 @@ router.get('/search', (req, res) => {
 
 // 顯示單一店面細節
 router.get('/restaurants/:_id', (req, res) => {
-  // console.log(req.params.id)
   const cssName = 'show'
-  const _id = req.params._id // 目前變數命名成 "_id" 沒問題，先繼續試
+  const _id = req.params._id
 
   Shop.findById(_id)
     .lean()
@@ -74,7 +71,8 @@ router.get('/newshop', (req, res) => {
 
 // 傳送新增資料
 router.post('/create-new-record', (req, res) => {
-  // console.log(req.body)
+  const userId = req.user._id
+  req.body.userId = userId
   return Shop.create(req.body)
     .then(res.redirect('/'))
     .catch(err => console.error(err))
@@ -82,43 +80,21 @@ router.post('/create-new-record', (req, res) => {
 
 // 顯示 edit 頁面資料
 router.get('/restaurants/edit/:_id', (req, res) => {
-  // console.log(req.params.id)
   const cssName = 'show'
   const title = '編輯餐廳細節'
   const _id = req.params._id
   const action = `/update/${_id}?_method=PUT`
-  return (
-    Shop.findById(_id)
-      .lean()
-      // .then(shop => console.log(shop))
-      .then(shop => {
-        // console.log(shop) //檢查用
-        res.render('edit', { shop, title, action, cssName })
-      })
-  )
+  return Shop.findById(_id)
+    .lean()
+    .then(shop => {
+      res.render('edit', { shop, title, action, cssName })
+    })
 })
 
 // 送出更新餐廳資料
 router.put('/update/:_id', (req, res) => {
   const updateArray = req.body
   const _id = req.params._id
-
-  // 老方法，有用，但很冗
-  // return Shop.findById(_id)
-  //   .then(shop => {
-  //     shop.name = updateArray.name
-  //     shop.name_en = updateArray.name_en
-  //     shop.category = updateArray.category
-  //     shop.image = updateArray.image
-  //     shop.location = updateArray.location
-  //     shop.phone = updateArray.phone
-  //     shop.google_map = updateArray.google_map
-  //     shop.rating = updateArray.rating
-  //     shop.description = updateArray.description
-  //     return shop.save()
-  //   })
-  //   .then(res.redirect(`/restaurants/${_id}`))
-  //   .catch(err => console.error(err))
 
   // 解答的方法 (超簡潔齁，以前沒教 TAT)
   return Shop.findByIdAndUpdate(_id, updateArray)
@@ -135,5 +111,4 @@ router.delete('/restaurants/:_id', (req, res) => {
     .catch(error => console.error(error))
 })
 
-// 把結果匯出路由器，雖不知為何不能寫成 module.exports = express.Router()
 module.exports = router

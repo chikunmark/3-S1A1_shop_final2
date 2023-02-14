@@ -13,37 +13,13 @@ router.get('/', (req, res) => {
   // 上面是新的，配合這個檔案，把 app 改成 router，不過變數細節有差別如下，用起來沒差，但未知細部差別
   // 新的 const router = express.Router()
   // 舊的 const app = express()
+  const userId = req.user._id
   const cssName = 'index'
   const sortNameInDropDown = '--'
-  // (下) 拿到 DB 內的店家資料並渲染
-  Shop.find()
+  Shop.find({ userId })
     .lean()
     .then(shops => res.render('index', { cssName, shops: shops, sortNameInDropDown }))
     .catch(error => console.error(error))
 })
 
-// router.post('/', (req, res) => {
-//   const cssName = 'index'
-//   console.log('post request 進行中')
-//   const sort = req.body.sort
-//   console.log(sort)
-
-//   const sortName =
-//     sort === '_id-asc' ? '原始排列' :
-//       sort === '_id-desc' ? '原始排列 (反向)' :
-//         sort === 'name-asc' ? '店名首字筆畫 (多->少)' :
-//           sort === 'name-desc' ? '店名首字筆畫 (少->多)' :
-//             '--:'
-//   const sortArray = sort.split('-')
-//   // const sequence = {sort[0]: sort[1]} // 這寫法不行，要用下2行才行
-//   const sequence = {}
-//   sequence[sortArray[0]] = sortArray[1]
-//   Shop.find()
-//     .lean()
-//     .sort(sequence) // 只要 () 內的是正確的 object (例：{_id: desc})，就算輸入變數也沒關係
-//     .then(shops => res.render('index', { cssName, shops: shops, sortName }))
-//     .catch(err => console.error(err))
-// })
-
-// 把結果匯出路由器，雖不知為何不能寫成 module.exports = express.Router()
 module.exports = router
