@@ -30,17 +30,28 @@ db.once('open', () => {
                 const userId = user._id
                 seed_user.ownedDataIndex.forEach(shopIndex => {
                   shop_json[shopIndex].userId = userId
-                  return Promise.all(Array.from({ length: 1 }, () => Shop.create(shop_json[shopIndex])))
+                  return Shop.create(shop_json[shopIndex])
+                  // return Promise.all(Array.from({ length: 1 }, () => Shop.create(shop_json[shopIndex])))
                 })
               })
+              .then(
+                Shop.find().count(function (err, count) {
+                  if (err) console.log(err)
+                  // else if (count >= 1) console.log('這是測試')
+                  else if (count >= 6) {
+                    console.log('done')
+                    resolve()
+                  }
+                })
+              )
           }
         })
       })
     })
   )
-  // 還是沒成，之後再試
-  // .then(() => {
-  //   console.log('done')
-  //   process.exit() // NODE 提供的 fn.，結束 terminal，相當於 Ctrl+C
-  // })
 })
+// // 還是沒成，之後再試
+// .then(() => {
+//   console.log('done')
+//   process.exit() // NODE 提供的 fn.，結束 terminal，相當於 Ctrl+C
+// })

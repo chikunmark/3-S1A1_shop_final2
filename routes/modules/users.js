@@ -15,6 +15,7 @@ router.post(
   '/login',
   passport.authenticate('local', {
     successRedirect: '/',
+    failureMessage: true,
     failureRedirect: '/users/login',
     // 若寫成 'users/login' 或 './users/login'，最後都會 redirect 到 ...:3000/users/users/login
   })
