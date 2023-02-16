@@ -11,7 +11,7 @@
 2. 執行
 
 ```
-git clone https://github.com/chikunmark/S2A8_Refactoring.git
+git clone https://github.com/chikunmark/3-S1A1_shop_final2.git
 ```
 
 3. 安裝必要套件、並初始化
@@ -19,7 +19,7 @@ git clone https://github.com/chikunmark/S2A8_Refactoring.git
 3.1 進入專案資料夾
 
 ```
-cd S2A8_Refactoring-main
+cd 3-S1A1_shop_final2
 ```
 
 3.2 安裝必要套件
@@ -28,9 +28,9 @@ cd S2A8_Refactoring-main
 npm install
 ```
 
-3.3 本專案有使用環境變數，並使用 mongoose 連接 MongoDB，  
- 請參考下圖，自行在當下目錄建立檔案，連結到您的 MongoDB 的 URI  
- (變數名請用 MONGODB_URI)  
+3.3 本專案有使用環境變數，請參考檔案 .env.example，建立您的變數 (.env 檔)，  
+ 下圖為範例，請參考並使用 mongoose 連接 MongoDB，  
+ 在當下目錄建立檔案，連結到您的 MongoDB 的 URI  
  ![.env demo](readme_pics/example2.jpg) 3.3 執行 seeder.js (輸入資料)
 
 ```
@@ -46,7 +46,7 @@ npm run dev
 4. 開啟瀏覽器 (Chrome, Firefox 等)，並進入以下網址，即可使用本專案
 
 ```
-http://localhost:8080
+http://localhost:3000
 ```
 
 5. 若遇停止環境 (停用專案)，請在終端機按下 Ctrl + C (windows)，或其 OS 的相應按鍵
@@ -58,7 +58,14 @@ http://localhost:8080
 - Node.js@18.12.0
 - npm@8.19.2
 - express@4.18.2
-- express-handlebars@3.0.0
+- express-handlebars@4.0.3
 - mongoose@5.9.13
 - body-parser@1.20.1 (內建於 express，直接使用其功能)
+- bcryptjs@2.4.3
+- connect-flash@0.1.1
+- express-session@1.17.1
+- method-override@3.0.0
+- passport@0.4.1
+- passport-facebook@3.0.0
+- passport-local@1.0.0"
 - dotenv@16.0.3
